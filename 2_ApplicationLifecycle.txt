@@ -1,0 +1,46 @@
+APPLICATION LIFECYCLE
+
+# Buildpacks
+	* helps the app gather everything they need to build - download dependencies.
+	* a combination of SCRIPTS that assembles RUNTIME, CONTAINERS, FRAMEWORKS, and APPLICATION into a droplet
+	* CF will not detect the buildpacks if it is included in cf push command or manifest file, other wise detect compatable buildpack
+	* Pushing an app with multiple buildpacks
+		--> cf push <APP-NAME> -b <BUILDPACK-1> -b <BUILDPACK-2> ... -b <FINAL-BUILDPACK>
+
+	* Scripts in BUILDPACK
+		--> bin/detect ----> check if the buildpack is required or not
+		--> bin/supply ----> provides dependencies for an app
+		--> bin/finalize ----> prepare the app for launch
+		--> bin/release ----> an information/metadata for CF how the app should be executed
+		--> bin/compile ----> deprecated - alternative to bin/supply and bin/finalize
+
+	* How to check the buildpack used for the deployed app?
+		--> cf app <APP-NAME>
+		
+# Buildpack Sources
+	* buildpacks ready for use --> Binary, GO, Java, .Net Core, Node.js, PHP, Python, Ruby, Staticfile
+
+# Stacks
+	* Each buildpacks associated with stacks ---> there is a stack column when 'cf buildpacks' runs
+	* To assign stack to the buildpack
+		-> cf update-buildpack BUILDPACK-NAME --assign-stack stack
+
+# Health checks
+	* It is a monitoring process that continually checks the status of a running CF APP.
+	* Key terms to configure health-check ---> use the following fields in manifest file or CLI
+		
+		= health-check-http-endpoint 
+			-> the app must return HTTP 200 if it is healthy
+		= health-check-type 
+			-> valid health check types are -> 
+				* PORT (check if the port is listening), 
+				* PROCESS (check the container if the process is running), 
+				* HTTP (check if the app return HTTP 200 in a second)
+	
+	* To Configure a health check while CREATING or UPDATING an app
+		cf push <APP-NAME> -u HEALTH-CHECK-TYPE -t HEALTH-CHECK-TIMEOUT
+		
+	* To Configure a health check for an existing app
+		cf set-health-check <APP-NAME> HEALTH-CHECK-TYPE --endpoint CUSTOM-HTTP-ENDPOINT
+
+# buildpack release notes

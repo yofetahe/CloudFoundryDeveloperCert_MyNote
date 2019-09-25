@@ -1,0 +1,128 @@
+ROUTING
+# What is ROUTES?
+	* define how to get/reach an application ---> mapping b/n APP and DOMAIN
+	* a unique route exists to each application in every space.
+	* a ROUTE can only be mapped to one space.
+	* DOMAIN can be mapped to multiple spaces.
+
+	* CF GoRouter --> routes/send requests to apps by associating an app with an address.
+		
+# Route management
+
+	* HTTP vs TCP Routes
+		--> HTTP Routes - created from HTTP domains
+				- include DOMAIN, an optional HOSTNAME, and an optional CONTEXT PATH.
+					eg. shared-domain.example.com, myapp.shared-domain.example.com, myapp.shared-domain.example.com/products
+		--> TCP Routes 	- created from TCP domains
+				- include domain and a route port. HOSTNAME & CONTEXT PATH are not supported for TCP routes.
+					eg. tcp.shared-domain.example.com:3000
+	* Create a Route
+		1) Create an HTTP Route with HOSTNAME
+			-   cf create-route <SPACE> <DOMAIN> [--hostname HOSTNAME]
+			eg. cf create-route my-space shared-domain.example.com --hostname myapp ---> myapp.shared-domain.example.com
+
+		2) Create an HTTP Route without HOSTNAME
+			-   cf create-route <SPACE> <DOMAIN>
+			eg. cf create-route my-space shared-domain.example.com ---> shared-domain.exmple.com
+
+		3) Create an HTTP Route with WILDCARD HOSTNAME
+			-   cf create-route <SPACE> <DOMAIN> [--hostname HOSTNAME]
+			eg. cf create-route my-space shared-domain.example.com --hostname '*' ---> *.shared-domain.example.com
+
+		4) Create an HTTP Route with a PATH
+			-   cf create-route <SPACE> <DOMAIN> [--hostname HOSTNAME] [--path PATH]
+			eg. cf create-route my-space shared-domain.example.com --hostname store --path products ---> store.shared-domain.example.com/products 
+
+		5) Create a TCP Route with a PORT
+			-   cf create-route <SPACE> <DOMAIN> (--port PORT | --random-port)
+			eg. cf create-route my-space tcp-domain.example.com --random-port ---> tcp-domain.exmple.com:60034
+			    cf create-route my-space tcp-domain.example.com --port 60035 ---> tcp-domain.exmple.com:60035
+
+	* List Route
+		- cf routes ---> list routes for the current space
+	* Check Route
+		- cf check-route HOST DOMEIN [--path PATH]
+		eg. cf check-route my-app shared-domain.example.com --path /products
+			* returns 'does exist' if the route exist in the route list
+	* Map a Route
+		### Manually Map a Resource
+
+		--> Map an HTTP Route
+			cf map-route <APP-NAME> DOMAIN [--hostname HOSTNAME] [--path PATH]
+		--> Map an TCP Route
+			cf map-route <APP-NAME> DOMAIN (--port PORT | --random-port)
+
+		### Map a Route with App Push
+		
+		--> cf push <APP-NAME> [-d DOMAIN] [--hostname HOSTNAME]
+
+		### Map a Route Using App Manifest file
+
+		--> add 'route: host, domain, port and/or path components of the route' in the manifest file
+
+	* Unmap a Route
+		- cf unmap-route <APP-NAME> DOMAIN [--hostname HOSTNAME] [--path PATH]
+		eg. cf unmap-route my-app private-domain.example.come --hostname myapp --path mypath
+
+		- cf unmap-route <APP-NAME> DOMAIN [--port PORT]
+		eg. cf unmap-route my-app tcp-domain.example.come --port 60000
+
+	* Delete Route
+		- cf delete-route DOMAIN [--hostname HOSTNAME] [--path PATH]
+		- cf delete-route DOMAIN [--port PORT]
+
+	* Routing Requests to a specific App Instance - on HTTP requests
+		- the format of the header should be X-CF-APP-INSTANCE: APP_GUID:APP_INDEX
+		- APP_GUID ---> is an internal indentifier of the app
+			* cf app <APP-NAME> --guid
+
+# inter-application communication
+
+	* Internal Routes
+		--> communications b/n an apps without leaving the platform on the container network
+		--> By default, apps cannot communicate with each other on the container network. To allow apps to communicate with each other, there must be a network policy
+		
+		* To map an internal rotue to any app
+			- cf map-route <APP-NAME> apps.internal [--hostname HOSTNAME]
+
+=====================================================================================================================
+
+DOMAIN
+	* cf domains ---> list all the domains for the targeted org
+
+	* HTTP vs TCP Domains
+		- HTTP Domain --> only requests using the HTTP protocol - GET, POST, ...
+		- TCP Domain --> requests over any TCP protocol
+
+	* Shared vs Private Domains
+
+		- Shared Domain - available to users in all orgs of a CF
+			# Create a Shared Domain
+				- HTTP Shared Domain --> cf create-shared-domain shared-domain.example.com
+				- TCP Shared Domain --> cf create-shared-domain tcp-domain.example.com --router-group default-tcp
+					* to get TCP Router Group ---> cf router-groups
+
+			# Delete a Shared Domain
+				- cf delete-shared-domain example.com
+
+			# Internal Domain
+				- a special type of shared domain used for app communication internal to the platform
+				- cf create-shared-domain shared-domain.exmapl.com --internal
+
+		- Private Domain - custom domains - accessable only for specific org in CF and can be shared with other orgs
+
+			# Create a Private Domain
+				- cf create-private-domain my-org private-domain.example.com (v7)
+				- cf create-domain my-org private-domain.example.com (v6)
+
+			# Sharing a Private Domain with One or More Orgs
+				- cf share-private-domain test-org private-domain.example.com
+				- cf unshare-private-domain test-org private-domain.example.com
+
+			# Delete a Private Domain
+				- cf delete-private-domain private-domain.example.com (v7)
+				- cf delete-domain private-domain.example.com (v6)
+
+	* DNS(Domain Name System) for Domains ????
+		- to create customized access to the apps, possible to map specific or wildcard custom domains to CF by using DNS provider
+

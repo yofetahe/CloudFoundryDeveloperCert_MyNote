@@ -1,0 +1,186 @@
+SERVICES
+	---> A managed software offering that can be used by an application.
+	
+	--> Binding a Service Instance - VCAP_SERVICES Env't Variable
+
+		cf bind-service <APP-NAME> <SERVICE-INSTANCE>
+
+		* Arbitrary Parameters ---> adds a list of configuration parameters
+			cf bind-service <APP-NAME> <SERVICE-INSTANCE> -c '{"role": "read-only"}'
+	
+		* Binding with App Manifest ---> using the app manifest to bind the service instance
+			services:
+				- test-mysql-01
+
+		* Named Service Bindings
+			cf bind-service <APP-NAME> <SERVICE-INSTANCE> --binding-name 'postgres-database'
+
+	--> Update Service Credentials
+		=> To update service
+		1. bind/unbind the service instance		
+			cf bind-service | unbind-service <APP-NAME> <SERVICE-INSTANCE>
+		2. restart or re-push the app 
+
+	--> Managing Service Instances with the CF CLI
+		* List Marketplace Services 
+			---> cf marketplace | m
+			=> Service-name, Plans, Description, Broker
+
+		* Creating Service Instances 
+			---> cf create-service <SERVICE-NAME> <SERVICE-PLAN> <SERVICE-INSTANCE>
+		
+		* List Service Instances
+			---> cf services ---> list the service instances in your target space.
+			---> cf service <SERVICE-NAME> ---> return a particular service instance detail
+
+		* bind a service instance 
+			= To an APP
+				---> cf bind-service <APP-NAME> <SERVICE-INSTANCE>
+				---> cf restart <APP-NAME>
+			= To a ROUTE
+				---> cf bind-route-service cfapps.io --hostname <APP-NAME> <SERVICE-INSTANCE>
+		
+		* unbind a service instance
+			---> cf unbind-service <APP-NAME> <SERVICE-INSTANCE>
+
+		* rename a service instance
+			---> cf rename-service <APP-NAME> <SERVICE-INSTANCE>
+
+		* update a service instance
+			---> cf update-service <SERVICE-INSTANCE> -p new-plan
+
+		* upgrade a service instance
+			---> cf services
+			- upgrade available column --> tells whether there is an upgrade or not.
+			
+			---> cf update-service <SERVICE-INSTANCE> --upgrade
+
+		* delete a service instance
+			---> cf delete-service <SERVICE-INSTANCE>
+		
+		
+# Service Broker API
+	---> an HTTP interface between the SERVICE MARKETPLACE of a platform and SERVICE BROKERS.
+
+# Service Brokers
+	---> Is the component of the SERVICE that implements the SERVICE BROKER API
+	---> Responsible for advertising a catalog of service offerings and service plans to the marketplace
+
+	---> two steps are required to make the services available to the end users
+	1) Register Broker
+		cf create-service-broker <BROKER-NAME> SOMEUSER SOMETHINGSECURE https://mybroker.example.com
+	2) Make plans public
+
+	---> List Service Brokers
+		* cf service-brokers
+	---> Update a Broker
+		* cf update-service-broker <BROKER-NAME> SOMEUSER SOMETHINGSECURE https://mybroker.example.com
+	---> Rename a Broker
+		* cf rename-service-broker <BROKER-NAME> <NEW-BROKER-NAME>
+	---> Remove a Broker
+		* cf delete-service-broker <BROKER-NAME>
+	---> Purge a Service
+		= If a service broker has been shut down or removed without first deleting service instances from a CF, 
+		  it is unable to remove the service broker or its services and plans from the marketplace
+		* cf purge-service-offering service-test
+		* cf purge-service-instance <SERVICE-INSTANCE-NAME>
+
+# Service Instance
+	---> an instantiation of a service offering
+
+# Service Binding
+	---> an association between an application and a service instance.
+
+========================================================
+
+# Managed Services 
+	---> DEFINITION = is the practice of OUTSOURCING certain processes and functions intended to improve operations and cut expenses
+	---> concept of -> "How to integrate a software service with PCF to create ---> Results Managed Service and Service Tile for PCF"
+
+# Service Instance Lifecycle & Use
+	---> To view a SPECIFIC MARKETPLACE plan detail
+		- cf marketplace -s <MARKETPLACE-SERVICE-NAME>
+		eg. cf marketplace -s cleardb
+
+	---> To CREATE a SERVICE-INSTANCE
+		cf create-service <MARKETPLACE-SERVICE-NAME> <SERVICE-PLAN> <SERVCE-INSTANCE-NAME>
+		eg. cf create-service cleardb spark my-cleardb
+
+	---> To check a SERVICE-INSTANCE status
+		cf service <SERVICE-INSTANCE-NAME>
+		eg. cf service my-cleardb ----> return detail info - like status: create succeeded
+
+	---> To UPDATE a service-instance
+		cf update-service <SERVICE-INSTANCE> -c '{"PARAMETER": "VALUE"}'
+		eg. cf update-service my-cleardb -c '{"count": 3}'
+	
+		cf service my-cleardb ----> return detail info - like status: update succeeded
+
+
+# User-Provided Service Instances (UPSI)
+	---> enable developers to USE SERVICES that are not available in the marketplace with their apps running on CF
+
+	* CREATE a User-Provided Service Instance
+		- cups = create-user-provided-service
+		cf cups SERVICE_INSTANCE [-p CREDENTIALS] [-l SYSLOG_DRAIN_URL] [-r ROUTE_SERVICE_URL] [-t TAGS]
+
+		eg. cf cups SERVICE_INSTANCE -p '{"username":"admin", "password":"pa55woRD"}'
+		    cf cups SERVICE_INSTANCE -l syslog://example.log-aggregator.com
+
+	* UPDATE a User-Provided Service Instance
+		- uups = update-user-provided-service
+		cf uups SERVICE_INSTANCE [-p CREDENTIALS] [-l SYSLOG_DRAIN_URL] [-r ROUTE_SERVICE_URL] [-t TAGS]
+
+# Sharing Service Instances
+	---> To Share an existing SPRING CLOUD SERVICES service instance
+		cf share-service <SERVICE-INSTANCE-NAME> [-o ORG-NAME] [-s SPACE-NAME]
+
+	---> Unshare a service instance
+		cf unshare-service <SERVICE-INSTANCE-NAME> [-o ORG-NAME] [-s SPACE-NAME]
+
+# Space Scoped Brokers
+	---> are registered to a specific space, and ALL USERS within that space can automatically access the broker's service plan.
+	---> service visibility is not managed separately.
+
+	= SERVICE-ACCESS
+		* cf service-access [-b BROKER] [-e SERVICE] [-o ORG]
+			---> list service access settings of a particular broker, service offering or organization
+		* Enable Service Access - enable a service or service plan for one or all orgs
+			cf enable-service-access [-b BROKER] [-p PLAN] [-o ORG]
+		* Disable Service Access
+			cf disable-service-access [-b BROKER] [-p PLAN] [-o ORG]
+
+# VCAP_APPLICATION
+	---> contains the associated attributes for a DEPLOYED APP
+	---> Attributes 
+		* application_id, application_name, application_uris, application_version
+		* cf_api, host, limits, name
+		* organization_id, organization_name
+		* process_id, process_type
+		* space_id, space_name
+		* start, started_at, start_at_timestamp
+		* state_timestamp, uris, users, version
+
+# VCAP_SERVICES
+	---> contains CONNECTION details
+	---> Attributes
+		* binding_name, instance_name, name, label, tags, plan, credentials
+
+# Service Keys
+	=> generate credentials for manually configuring consumers of marketplace services.
+
+	* Create a Service Key
+		cf create-service <SERVICE-INSTANCE> <KEY>
+	
+	* List Service Keys for a service instance
+		cf service-keys <SERVICE-INSTANCE>
+	
+	* Delete a service key
+		cf delete-service-key <SERVICE-INSTANCE> <KEY>
+		cf delete-service-key -f <SERVICE-INSTANCE> <KEY>
+			* -f ---> to force deletion without confirmation.
+
+
+
+
+

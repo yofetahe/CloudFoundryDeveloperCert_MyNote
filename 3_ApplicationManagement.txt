@@ -1,0 +1,140 @@
+APPLICATION MANAGEMENT
+# CF push
+	* Push with defalut 
+		---> cf push <APP-NAME> 
+		---> pushes the app with the default setting - default size of memory and disk space, number of instances, ...
+		---> By default, CF sets the HOSTNAME & DOMAIN --> Hostname = app-name(myapp), Domain = cfapps.io ---> https://myapp.cfapps.io
+
+	* Push with Customize Setting 
+		= Customize BASIC App Settings - name, instances, memory limit, start command
+			---> cf push <APP-NAME> -i 2 -m 512G --no-start
+
+		= Customize the ROUTE - hostname and domain
+			---> cf push <APP-NAME> -n calculator -d yamget.com ---> [-n = --hostname]
+
+		= Limit the UPLOAD FILE
+			---> by default, CF uploads all app files except version control files and folders with names such as .svn, .git and _darcs
+			---> To exclude files from upload ---> create a file [.cfignore] and save it in the directory where 'cf push' command runs
+
+		= Configure App Initialization
+			---> To run initialization tasks ---> create a file [.profile] scripts that contains the initialization tasks and save it in the directory where 'cf push' command runs
+				eg. the file [.profile] can contain ---> export LANG=en_US.UTF-8 //set the default language for the app
+
+		= Configure App Services
+			---> if a NEWLY-PUSHED app has the same NAME & ROUTE as an older app version, 
+			     the new app retains the SERVICE BINDINGS and SERVICE CONFIGURATION of the previously-pushed version
+
+	* App Updates and Downtime
+		--> When pushing an app that is already RUNNING, CF stops all existing instances of that app. ---> users will get "404 Not Found" message
+		--> Possible to avoid app downtime by using the BLUE-GREEN METHOD to swap routes between app versions running in parallel ????
+
+# CF start/stop/restart/restage
+	= START
+		--> cf push <APP-NAME>
+		--> CF determins the START COMMAND for the app from ONE of the THREE
+			* the [-c] command-line option in the CF CLI --> cf push <APP-NAME> -c "node APP-NAME.js"
+			* the command attribute in the app manifest.yml --> command: node APP-NAME.js
+			* the buildpack, w/c provides a start command appropraite for a particular type of app.
+		--> cf start <APP-NAME>
+
+		* Forcing CF to use the BUILDPACK START COMMAND
+			--> cf push <APP-NAME> -c "null" OR command: null --> in the manifest.yml file
+	= RESTART
+		--> cf restart APP-NAME
+			* stops the app and restart it with the already compiled DROPLET.
+			* to refresh the app's ENVIRONMENT after actions such as binding a new service to the app or setting an ENV'T VARIABLE that only the app consume
+			*** NOTE *** if the changed ENV'T VARIABLE consumed by buildpack in addition to the app, then the app must be RESTAGE
+
+	= RESTAGE
+		--> cf restage APP-NAME
+			* stops the app, compile a new droplet (without updating the app source) and start it
+# CF delete
+	---> To delete an app
+	---> cf delete|d <APP-NAME> [-r] [-f] ----> -r = delete any mapped routes, -f = force deletion without confirmation
+
+# CF apps
+	---> list all the apps deployed in the space
+
+# Scaling (horizontal/vertical)
+	* scaling - two types 
+		---> Manual Scaling - is either Horizontal (increasing # instances) or Verital Scaling (increaseing memory or disk space)
+			* Horizontal --> cf scale <APP-NAME> -i 5 ---> ensure to handle more user loads or if one of the instance fails, the other will provide service
+			* Vertical --> cf scale <APP-NAME> -m 1G -k 512M ---> ensure the app peform better / increase capacity /
+
+		---> Automated Scaling - implemented by using services like Zoo keeper or App Autoscaler Services
+			* App Autoscaler - marketplace service that ensures app performance and helps control cost of running apps
+
+# Application manifests
+	* Manifest and Command Line options override the default attribute values of 'cf push'
+	* Manifest override most recent values, including defaults and values set by commands such as 'cf scale'
+	* Command line options override manifests
+
+	* Manifest Format - manifest file written in yaml
+		- the file begins with THREE DASHES
+		- the 'application:' block begins
+		- the 'app name' is preceded by a single dash and once space ---> - name: <APP-NAME>
+		- Subseqent lines in the block are indented two spaces to align with name.
+
+	* Deploying MULTIPLE APPs with ONE Manifest file ---> General rule
+		- Use a [no-route] line in the description of any app
+		- If the manifest file isnot named [manifest.yml] OR not in the current working directory, use the [ -f ] command line option
+		- To push a single app rather than all the apps described in the manifest, provide the desired APP-NAME by running ---> cf push <APP-NAME>
+
+	* Application Attributes
+		- buildpacks 
+			--> buildpacks:
+				- buildpack-url
+		- Command
+			--> command: null
+		- disk_quota
+			--> disquota: 1024M
+		- docker
+			--> docker:
+				image: docker-image-repository/docker-image-name
+				username: docker-user-name
+		- health-check-http-endpoint
+		- health-check-type
+			--> health-check-type: http | port
+			    health-check-http-endpoint: /health
+		- memory
+			--> memory: 1024M
+		- metadata
+			--> metadata:
+				annotations:
+					contact: "bob@gmail.com"
+				labels:
+					sensitive: true
+		- no-route
+			--> no-route: true
+		- path
+			--> path: /path/to/app
+		- processes
+		- random-route
+			--> random-route: true
+		- routes
+			--> routes:
+			    - route: example.com
+			    - route: www.example.com/foo
+			    - route: tcp-example.com:1234
+		- sidecars
+		- stack
+			--> stack: cflinuxfs3
+		- timeout
+			--> timeout: 80
+		- Env't Variable
+			--> env:
+				RACK_ENV: production
+		- Services
+			--> services:
+				-instance_ABC
+				-instance_XYZ
+
+
+
+
+
+
+
+
+
+

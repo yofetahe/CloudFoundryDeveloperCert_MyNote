@@ -1,0 +1,113 @@
+- Basics - 16%
+	# CLI
+		* To configure language for cli
+			---> cf config --local <LANG>
+		* Login
+			---> cf login [a API_URL] [-u USERNAME] [-p PASSWORD] [-o ORG] [-s SPACE]
+			NOTE - API_URL ---> api.run.pivotal.io
+
+			---> Alternative to login
+			Write script to login and set target using the non-interactive - cf api, cf auth, cf target
+
+			---> the cf CLI saves a "config.json" file ---> contains API Endpoint, org, space values and access token
+
+		* Users and Roles
+			---> Users can be at the organization or space level
+			---> Commands for listing Users
+				* cf org-users <ORG-NAME>
+				* cf space-users <ORG-NAME> <SPACE-NAME>
+			---> Commands for managing roles
+				* Available roles ---> OrgManager, BillingManager, OrgAuditor, SpaceManager, SpaceDeveloper, SpaceAuditor
+				* Commands 
+					- cf set-org-role <USERNAME> <ORG> <ROLE> ---> eg. cf set-org-role yofetahe@gmail.com "YamGet IT Solution" OrgManager
+					- cf unset-org-role
+					- cf set-space-role
+					- cf unset-space-role
+		
+
+	# CLI Plugin
+		* Plugins 
+			---> enable developers to add custom COMMANDS to the cf CLI. 
+			---> possible to install and use plugins that CF developers and 3rd party developers create.
+		* Installing a Plugins
+			- 1. download a binary or the source code for a plugin from a trusted provider
+			  2. Run ---> cf install-plugin BINARY-FILE-NAME
+		* Running Plugin Command
+			- cf plugins ---> to list all the plugins and all commands that the plugins provide
+			- cf PLUGIN-COMMAND ---> to execute a plugin command
+		* Checking for Plugin Updates
+			- cf plugins --outdated ----> to check all registered plugin repositories for newer versions fo currently installed plugins
+		* Uninstalling a plugin
+			- cf uninstall-plugin PLUGIN-NAME ---> not BINARY-FILE-NAME
+
+	
+	# Logging
+		* Loggregator --> is responsible for logging in CF, it provides stream of log output from the app and from CF system components that interact with your app during updates and execution
+		* every log line contains 4 fields 
+			---> Timestamp
+			---> Log type(Origin Code) -> API, STG, RTR, LGR, APP, SSH, CELL
+			---> Channel (OUT - for stdout, ERR - for stderr) -> for java - System.err.print("error");
+			---> Message
+		* to view logs in cli
+			TAILING LOGS -> cf logs <APP-NAME> -----> to stream loggregator output to the terminal
+			DUMPING LOGS -> cf logs <APP-NAME> --recent -----> to display all the lines in the loggregator buffer.
+
+	# Targeting
+
+	# CF Help
+
+	# Orgs and Spaces
+		---> ORGs - a DEVELOPMENT ACCOUNT that an individual or multiple collaborators can own and use.
+			  - All collaborator access an org with user accounts - roles ---> OrgManager, OrgAuditor, OrgBillingManager
+			  - Org has ACTIVE status by default, but an Admin can set the status to SUSPENDED
+
+		---> SPACEs - a shared location for app development, deployment, and maintenance.
+			    - every APP, SERVICE & ROUTE is scoped to a space.
+			    - ORG-MANAGER - can set quotas for the space
+				- usage of paid services
+				- # of app instances, service keys, routes, reserved route ports
+				- Memory used across the space
+				- Memory used by a single app instances
+		---> User Roles - it is user's permissions in orgs and spaces. User can have more than one role.
+		---> User Roles Type - each type includes different permissions
+			* Admin, Admin Read-only, Global Auditor, 
+			* Org Managers, Org Auditors, Org Billing Managers, Org Users, 
+			* Space Managers, Space Developers, Space Auditors
+
+	# CF curl
+		---> executes a request to the targeted API endpoint
+		---> by default, it will do a GET to the specified PATH. If the data is provided via -d, a POST will be performed
+		---> command
+			- cf curl PATH [-iv] [-X METHOD] [-H HEADER]... [-d DATA] [--output FILE]
+ 			- eg. 	- cf curl "/v2/apps" -d @/path/to/file
+				- cf curl "/v2/apps" -X GET -H "Content-Type: application/x-www-form-urlencoded" -d 'q=name:myapp'
+				- cf curl -H "Content-Type: application/json" -X POST -d '{"firstName":"foo", "lastName":"bar"}' http://<APP-URL>/user
+				- cf curl http://<APP-URL>/user
+
+	# Environment variables
+		---> the means by which the CF runtime communicates with a deployed app about its environment
+		---> cf env <APP-NAME> ---> list the env variables for the app
+			* VCAP_APPLICATION & VCAP_SERVICES ---> variables provided in the container environment
+		---> cf set-env <APP-NAME> <ENV-VAR-NAME> <ENV-VAR-VALUE>
+		---> App-Specific System Variables 
+			- CF_INSANCE_ADDR, CF_INSTANCE_GUID, CF_INSTANCE_INDEX, CF_INSTANCE_IP, CF_INSTANCE_INTERNAL_IP, CF_INSTANCE_PORT, CF_INSTANCE_PORTS
+			- DATABASE_URL, HOME, LANG, MEMORY_LIMIT, PORT, PWD, TMPDIR, USER, VCAP_APP_PORT
+			- VCAP_APPLLICATION ---> contains the associated attributes for a deployed app
+			- VCAP_SERVICES --> contains connection details
+
+		---> ENVIRONMENT VARIABLE GROUPS ????
+			* are system-wide variables that enable operators to apply a group of environment variables to all RUNNING apps and STAGING apps separately
+			* Commands for environment variable groups are
+				- running-environment-variable-group OR revg
+				- staging-environment-variable-group OR sevg
+				- set-running-environment-variable-group OR srevg
+				- set-staging-environment-variable-group OR ssevg
+
+
+
+
+
+
+
+
+

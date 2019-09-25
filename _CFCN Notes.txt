@@ -1,0 +1,68 @@
+* CFCD Exam Overview
+
+	# Application Lifecycle - 14%
+		- Buildpacks
+		- buildpack sources
+		- Stacks
+		- Health checks
+		- buildpack release notes
+
+	# Application Management - 16%
+		- CF push
+		- CF start/stop/restart/restage
+		- CF delete
+		- CF app
+		- Scaling (horizontal/vertical)
+		- Application manifests
+
+	# Basics - 16%
+		- CLI
+		- CLI Plugin
+		- Logging
+		- Targeting
+		- CF Help
+		- Orgs and Spaces
+		- CF curl
+		- Environment variables
+
+	- Platform security - 8%
+		- Roles and Permissions
+		- Application security groups
+
+	# Routing - 15%
+		- Route management
+		- inter-application communication
+
+	# Services - 17%
+		- service brokers
+		- managed services
+		- service instance lifecycle & use
+		- UPSI
+		- Sharing service instances
+		- Space scoped brokers
+		- VCAP_APPLICATION
+		- VCAP_SERVICES
+		- Service keys
+
+	- Troubleshooting - 14%
+		- CF SSH
+		- Route confusion
+		- Out of memory
+		- CF TRACE
+		- Troubleshoot SVC connection
+		- Route collision
+
+* Exam Environment
+	- allowed to access at the time of exam
+	docs.cloudfounry.org | apidocs.cloudfoundry.org | https://v3-apidocs.cloudfoundry.org | https://plugins.cloudfoundry.org
+
+* Linux Cloud Foundry Website
+	- for registration
+	- hand book
+	- FAQ
+	- Study Guide
+
+* Exam
+	- 3 hrs & require 81%
+	- 14 practical questions
+	- multiple questions

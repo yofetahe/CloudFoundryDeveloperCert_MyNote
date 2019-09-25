@@ -1,0 +1,9 @@
+PLATFORM SECURITY
+# Roles and Permissions
+
+# Application Security Groups (ASGs)
+	---> collection of egress rules that specify the protocols, ports, and IP address ranges where app or task instances send traffic
+		* egress rules/filters ---> controls the traffic that is attempting to leave the network.
+	
+	---> Staging and Running ASGs
+		* 

@@ -1,0 +1,66 @@
+TROUBLE SHOOTING
+# CF SSH (Secure Shell)
+	---> To troubleshoot an INSTANCE of an app -> possible to gain SSH access to the app using the SSH PROXY and DAEMON
+	---> An app is SSH-Accessible ONLY if operators, space managers, and space developers ALL grant SSH access at their respective levels.	
+	
+	* Operator can configure SSH access for Entire deployment 
+		---> DEPLOYMENT level
+	* Space Managers can configure SSH access for Spaces 
+		---> SPACE level
+		---> allow-space-ssh & disallow-space-ssh
+	* Space developers can configure SSH access for apps 
+		---> APP level
+		---> enable-ssh & disable-ssh
+
+	= SSH Access for Apps and Spaces
+		---> Enable and Disable SSH Access
+			- SPACE Level
+			* cf allow-space-ssh <SPACE-NAME>
+			* cf disallow-space-ssh  <SPACE-NAME>
+			
+			- APP Level
+			* cf enable-ssh <APP-NAME>
+			* cf disable-ssh <APP-NAME>
+
+		---> Check SSH Access Persmissions
+			* cf ssh-enabled
+			* cf space-ssh-allowed
+
+		---> Securely log into app container
+			* cf ssh
+
+		---> Enable secure log in to an app container using non-CF SSH tools
+			* cf ssh-code
+			
+
+# Route Confusion
+
+# Out of memory
+
+# CF_TRACE
+	---> Cloud controller REST API calls
+	---> a local environment variable that modifies the behavior of the cf CLI.
+		CF_TRACE=PATH-TO-TRACE.LOG cf push <APP-NAME>
+
+# Troubleshoot SVC connection
+
+# Route Collusion
+
+
+
+
+
+===================================================================================================
+---
+applications:
+	- name: my_app
+	  no-route: true
+	  instance: 1
+	  memory: 750M
+	  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+	  service:
+		- my_sql
+	  path: ./target/spring-ecommerce-app-0.0.1-SNAPSHOT.jar
+	  env:
+		
+	  
