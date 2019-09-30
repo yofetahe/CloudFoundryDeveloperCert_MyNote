@@ -1,4 +1,11 @@
 - Basics - 16%
+
+----------------------------
+
+Pivotal Web Service (PWS) ---> provides "Cloud Foundry as a web serivice", deployed on top of AWS.
+
+----------------------------
+
 	# CLI
 		* To configure language for cli
 			---> cf config --local <LANG>

@@ -21,6 +21,9 @@ SERVICES
 			cf bind-service | unbind-service <APP-NAME> <SERVICE-INSTANCE>
 		2. restart or re-push the app 
 
+===========================================================================
+	--> Managed Service Flow ==> [cf marketplace] -> [cf create-service] -> [cf bind-service] -> [cf restart or cf restage]	
+
 	--> Managing Service Instances with the CF CLI
 		* List Marketplace Services 
 			---> cf marketplace | m
@@ -33,7 +36,7 @@ SERVICES
 			---> cf services ---> list the service instances in your target space.
 			---> cf service <SERVICE-NAME> ---> return a particular service instance detail
 
-		* bind a service instance 
+		* bind a service instance ---> MEANING ---> CF is passing credentials to our app through an ENVIRONMENT VARIABLE called VCAP_SERVICES
 			= To an APP
 				---> cf bind-service <APP-NAME> <SERVICE-INSTANCE>
 				---> cf restart <APP-NAME>
@@ -57,7 +60,7 @@ SERVICES
 
 		* delete a service instance
 			---> cf delete-service <SERVICE-INSTANCE>
-		
+===========================================================================
 		
 # Service Broker API
 	---> an HTTP interface between the SERVICE MARKETPLACE of a platform and SERVICE BROKERS.
@@ -95,7 +98,7 @@ SERVICES
 
 # Managed Services 
 	---> DEFINITION = is the practice of OUTSOURCING certain processes and functions intended to improve operations and cut expenses
-	---> concept of -> "How to integrate a software service with PCF to create ---> Results Managed Service and Service Tile for PCF"
+	---> concept of -> "How to integrate a software service with PCF to create ---> Managed Service and Service Tile for PCF"
 
 # Service Instance Lifecycle & Use
 	---> To view a SPECIFIC MARKETPLACE plan detail
@@ -119,6 +122,8 @@ SERVICES
 
 # User-Provided Service Instances (UPSI)
 	---> enable developers to USE SERVICES that are not available in the marketplace with their apps running on CF
+	---> created manually and are not visible in the marketplace
+	---> are arbitrary set of key-value pairs
 
 	* CREATE a User-Provided Service Instance
 		- cups = create-user-provided-service
@@ -140,7 +145,10 @@ SERVICES
 
 # Space Scoped Brokers
 	---> are registered to a specific space, and ALL USERS within that space can automatically access the broker's service plan.
+	---> CREATED BY SPACE DEVELOPERS
 	---> service visibility is not managed separately.
+
+	[ cf create-service-broker --space-scoped ]
 
 	= SERVICE-ACCESS
 		* cf service-access [-b BROKER] [-e SERVICE] [-o ORG]
