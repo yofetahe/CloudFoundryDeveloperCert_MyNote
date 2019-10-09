@@ -188,7 +188,41 @@ SERVICES
 		cf delete-service-key -f <SERVICE-INSTANCE> <KEY>
 			* -f ---> to force deletion without confirmation.
 
+==========================================
 
+https://docs.cloudfoundry.org/services/route-services.html#examples
 
+# ROUTE SERVICES
+	---> is a kind of marketplace services
+	---> sit infront of an app to PROCESS or TRANSOFRM a request before being routed to an app.
+	---> are BIND to an app route, NOT with the app
+	---> are decoupled from app.
 
+	=> There are 3 MODELS for Route Service
+		1 - Fully-Brokered Services
+			* Assumption - App's route bind with Route Service
+			* Client Request come to the CF Router through Load Balancer, 
+     			  CF Router redirect the request to the Route Service Instance (related with => Service Borker), 
+			  then Route Service redirect the request back to CF Router through Load Balancer,
+			  then the CF Router forward the request to the APP
+
+			* cf create-service BROKER-SERVICE-PLAN SERVICE-INSTANCE
+			  cf bind-route-service APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME][--path PATH]
+
+			NOTE:- 	bind-service ---> binds APP with SERVICE-INSTANCE
+				bind-route-service ---> binds APP ROUTE with SERVICE-INSTANCE
+
+		2 - Static, Brokered Services
+			* an operator installs a static routing service outside of CF --> it could be a piece of hardware, infront of the load balancer
+			* the Routing Service runs OUTSIDE of CF
+			* Client Request goes directly to the Route Service Instance,
+			  then Route Service Intance forward the request to CF Router through Load Balancer,
+			  then CF Router pass the request to the APP
+
+		3 - User-provided Services
+			* if a Route Service is not listed in the CF marketplace by broker, a developer can bind "local app" as a user-provided service.
+			* the steps is the same as Fully-Brokered Services
+
+			* cf cups SERVICE-INSTANCE -r ROUTE-SERVICE-URL or -p '{"URL": "route-service-url"}'
+			  cf bind-route-service APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME][--path PATH]
 

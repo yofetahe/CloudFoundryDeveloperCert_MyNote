@@ -1,0 +1,154 @@
+1 - Overview
+--------------------------------------------------
+* Login to CF ---> cf login
+* Difference between restarting and restaging?
+* Two predefined environment-variable?
+* What is Services? ----> any type of add-on that can be provisioned along side your apps
+* What is Organization? ---> a development account that an individual or multiple collaborators can own and use.
+* What is Routes? ---> a feature that defines how to get to an application
+* Three activities involved in deploying an application to CF? ---> upload, stage, start
+* What is Space? ---> A feature that provides users with access to a shared location for app development, deployment, and maintenance
+* What is meant by ephemeral? ---> virtual machines and containers are temporary
+* How to deploy in CF? ---> cf push
+
+2 - cf Command Line
+--------------------------------------------------
+* How to select space and/or org to deploy to? ---> cf target [-o org] [-s space]
+* cf target? ---> sets or view the targeted org or space
+* Start an app? ---> cf start APP-NAME
+* View routes? ---> cf routes
+* view a single organization? ---> cf org ORG-NAME
+* view organization list? ---> cf orgs
+* login to CF? ---> cf login [-a API_URL] [-u USERNAME] [-p PASSWORD] [-o ORG] [-s SPACE]
+* view logs? ---> cf logs APP-NAME
+
+3 - CF Architecture
+--------------------------------------------------
+* Function of Doppler? ---> collect logs from Metrons
+* What is droplet? ---> a staged app packaged with everything needed to run in a container
+* Containers run in? ---> Diego Cell
+* Component of Cloud Controller? ---> Stager
+* Component of Diego? ---> Brain
+* Component of Loggregator? ---> Doppler
+* Component of Cell? ---> Metron
+* Component of Brain? ---> Auctioneer and Converger
+* Two data stores used by the cloud controller? ---> Blobstore and CC_DB
+* PCF Elastic Runtime?
+* CF's API endpoint for? ---> it provides access to the system and to manage spaces and orgs
+
+[4] - Logging, Scaling and High Availability
+--------------------------------------------------
+* Component of Elastic Runtime exposes an API for users to manage applications? ---> Cloud Controller
+* Logs handled in a 12 factor app? ---> as event stream
+* How app logs written? ---> Stdout and stderr
+* Components of loggregator system? ---> Metron, Droppler, Traffic Controller, Firehose, Nozzle
+* Diff between Scaling up (Vertical scaling) and Scaling out (Horizontal scaling)? ---> Increase Memory or disk vs Increase number of instance
+* Four level of high-availability provided by PCF? 
+	---> BOSH detects and recreates failed VMS, 
+	---> BOSH detects and restarts failed processes, 
+	---> Application instances spread across different cells in different availability zones, 
+	---> CF converger detects and restarts application instances
+* Gardern is an interface with many implementations
+* Command to see info if the application has been crashing? ---> cf events
+
+5 - Managed and User Provided Services
+--------------------------------------------------
+* VCAPS_SERVICES? ---> an env variable containing connection details of bindable services
+* How to use Managed Services? ---> cf bind-service APP-NAME SERVICE-INSTANCE [-c PARAMETER-AS-JSON]
+* difference between managed and user-provided services? ---> Managed Service is a service available in marketplace, User-provided service is provisioned outside of the platform.
+* How to create managed Services? ---> cf create-service SERVICE PLAN SERVICE-INSTANCE
+* How to create user-provided service? ---> cf cups SERVICE-INSTANCE [-p CREDENTIALS] [-i SYSLOG_DRAIN_URL] [-r ROUTE_SERVICE_URL]
+* How services interact with spaces? ---> every app and service is scoped to a space
+
+6 - Manifest
+--------------------------------------------------
+* A line that a child manifest must contain to point to its parent manifest? ---> inherit
+* Manifest file vs Command line? ---> command line has always priority
+* How do you create manifest file? ---> Using text editor or cf create-app-manifest APP-NAME
+* what happen if deployment option is not specified? ---> cf push will prived a default deployment options
+* Minimal manifest file requires? ---> app-name
+* Multiple manifests file can be used to describe an application --- true
+* A single manifest file can describe multiple applications --- true
+
+[7] - Application Security Group
+--------------------------------------------------
+* Where can ASG apply to? ---> org and space
+* What is it? ---> it is a network policy rule specifying PROTOCOLS, PORTS, and IP ranges that apply to OUTBOUND network connections initiated from apps.
+* Which approach ASG use to firewall rules? ---> While List ?????????
+* Two lifecycle of ASG? ---> Staging and Running
+* How to define ASG? ---> cf create-security-group
+
+8 - Log Drain
+--------------------------------------------------
+* What is Syslog? ---> it is a standard for message logging
+* What is the use of log drain? ---> It is to persist CF app logs to log management tool for better log search, alert, and analysis
+* What is log drain? ---> It is an approach to persist CF app logs to a log management service
+* How to create a log drain in CF? 
+	---> cf cups SERVICE-INSTANCE -i SYSLOG-URL, cf bind-service APP-NAME SERVICE-INSTANCE
+	---> cf create-service SERVICE PLAN SERVICE-INSTANCE --> it is a log store service, cf bind-service APP-NAME SERVICE-INSTANCE
+
+9 - Blue-Green Deployment
+--------------------------------------------------
+* How route mapping enbale a blue-green deployment? ---> by routing and load balance the requests to desired production env
+* What is Blue-Green Deployment? ---> it is a technique to reduces downtime and risk by running two identical production env't called blue and green
+* map route with cf? ---> cf map-route APP-NAME DOMAIN --hostname HOSTNAME [-p PATH]
+* True about blue-green deployment 
+	---> Changes need to be backwards compatible and non-destructive
+	---> It can be automated
+	---> It is enabled by making use of Pivotal Cloud Foundry route mapping feature
+* unmap route with cf? ---> cf unmap-route APP-NAME DOMAIN [--hostname HOSTNAME][--path PATH]
+
+[10] - Autoscaler
+--------------------------------------------------
+* What is autoscaler schedule limit changes feature? ---> it is a feature of to schedule autoscaler to change the allowable instance range to track expected surges or quiet periods
+* How app autoscaler determines when to scale? 
+	---> Decrement by one instance only when all metrics fall below the LOW threshold specified
+	---> Increment by one instance when any metric exceeds the high threshold specified
+* what is autoscaler? ---> it is a marketplace service that ensures app performance and helps control the cost of running apps
+* How to setup Autoscaler? ---> 1. create an instance of autoscaler service 2. Bind the service to an app
+* What to configure on Autoscaler? ---> Instance limits, Scaling rules, Scheduled Limit changes
+* How autoscaler implemented? 
+	---> by configuring rules that adjust INSTANCE COUNT based on metrics thresholds such as CPU Usage
+	---> by modifying the max and min number of instances for an app, either manually or following a schedule
+
+11 - App Performance Monitor (APM)
+--------------------------------------------------
+* How is monitoring implemented for CF? ---> from the marketplace services
+* example of APM? ---> AppDynamics, NewRelic, Dynatrace
+* Why is a buildpack involved in setting up APM in PCF???? ---> Because APM agent need to be included in the droplet
+* Performance Monitoring? ---> Real-time monitoring of applications
+
+12 - Buildpack
+--------------------------------------------------
+* How does buildpack detection works? ---> CF checks compatibility with each buildpack on buildpack priority list starting from position 1 until the correct buildpack is found.
+* What is buildpack? ---> a combination of scripts that assembles runtimes, containers, frameworks, and appliction into a droplet
+* A script provides dependencies for an app? ---> bin/supply
+* A script provides metadata to CF indicating how the app should be executed? ---> bin/release
+* A script determines whether or not to apply the buildpack? ---> bin/detect
+* A script prepares the app for launch? ---> bin/finalize
+
+[13] - Service Broker
+--------------------------------------------------
+* API call to create a new resource? ---> PUT /v2/service_instances/:instance_id
+* API returns llist of all services available on the broker? ---> GET /v2/catalog
+* What is the purpose of service broker? ---> To enable end users to provision reserved resources and credentials on demand
+* What is service broker? ---> it is a component of service that advertise a catalog of service offering and service plans, as well as interpreting calls for provision, bind, unbind, and deprovision
+* Service provisioning can be done? ---> synchronously ans asynchronously
+
+14 - CICD
+--------------------------------------------------
+* How does Continuous Delivery compare to traditional development methodologies?
+	---> Continuous Delivery do several smaller deployments, that reduces risks and increase feedback
+* Continuous Integeration? ---> Software development practice to merge or sync changes with main codebase as often as possible
+* Continuous Deployment? ---> Software development practice to automatically deploy software to production whenever it passess all tests
+* Continuous Delivery? ---> Software development practice to build software so that it can be released to production at any time.
+
+[15] - Route Service
+--------------------------------------------------
+* create route service? ---> cf bind-route-service [domain-name] [route-service-name] [--hostname hotname]
+* What is route service? ---> a class of marketplace service that perform filter or content transoformation on app request and response
+* example of route services usage? --->  Logging, Rate Limiting, Authentication
+* Why route services are needed? ---> to provide transformation or processing to requests before/after they reach an application
+* How does a route service know where to send a request once it has performed its function? ---> X-CF-Forwarded-Url
+
+
