@@ -70,9 +70,9 @@ SERVICES
 	---> Responsible for advertising a catalog of service offerings and service plans to the marketplace
 
 	---> two steps are required to make the services available to the end users
-	1) Register Broker
+	1) Register Service Broker
 		cf create-service-broker <BROKER-NAME> SOMEUSER SOMETHINGSECURE https://mybroker.example.com
-	2) Make plans public
+	2) Make plans publicly available in the catalog
 
 	---> List Service Brokers
 		* cf service-brokers
@@ -87,6 +87,20 @@ SERVICES
 		  it is unable to remove the service broker or its services and plans from the marketplace
 		* cf purge-service-offering service-test
 		* cf purge-service-instance <SERVICE-INSTANCE-NAME>
+
+	---------------------
+
+	===> How do a SERVICE BROKER and the CLOUD CONTROLER intercooperate?
+		* the basic auth username and password which are provided when adding a broker are encrypted in CF-DB, 
+		  and used by the Cloud Controller to authenticate with the broker when making all API calls.
+	===> Service Broker endpoint
+		* Catalog Endpoint - makes the plans in the service available for users
+		* Auth Endpoint - enables Cloud Controller to authenticate the service broker with Username and Password.
+	===> SERVICE BROKER -- can be deployed somewhere that CLOUD CONTROLLER can reach it via HTTPS call.
+		--- can live inside PCF as an application or outside of PCF
+	===> SERVICE BROKER is required to respond with in 60 SECONDs by the CLOUD CONTROLLER
+
+	---------------------
 
 # Service Instance
 	---> an instantiation of a service offering

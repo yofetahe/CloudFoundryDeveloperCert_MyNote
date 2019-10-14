@@ -62,7 +62,16 @@ APPLICATION MANAGEMENT
 			* Vertical --> cf scale <APP-NAME> -m 1G -k 512M ---> ensure the app peform better / increase capacity /
 
 		---> Automated Scaling - implemented by using services like Zoo keeper or App Autoscaler Services
-			* App Autoscaler - marketplace service that ensures app performance and helps control cost of running apps
+			* App Autoscaler 
+				- marketplace service that ensures app performance and helps control cost of running apps
+				- it allows apps to be automatically scaled - useful to ensure there are approprait app instances available align with the requests
+				- configure the MIN # of instance and MAX # of instance based on 
+					=> CPU Utilization, 
+					=> HTTP throughput per second,
+					=> HTTP latency time and
+				  	=> based on date, time, and day of the week.
+				- APPs scale by 1 instance per event. Apps will SCALE UP when ANY metric max is met and SCALE DOWN only when ALL metric min are met.
+				
 
 # Application manifests
 	* Manifest and Command Line options override the default attribute values of 'cf push'

@@ -50,6 +50,21 @@ Pivotal Web Service (PWS) ---> provides "Cloud Foundry as a web serivice", deplo
 	
 	# Logging
 		* Loggregator --> is responsible for logging in CF, it provides stream of log output from the app and from CF system components that interact with your app during updates and execution
+		
+		------------------------------------------
+		Loggregator Components
+			* Loggregator Agent - run on both CF component VMs and Diego cell VMs. They receive logs and metircs from APPs and CF Components located on those VMs.
+			* System Metric Agent - 
+			* Doppler - receive logs and metrics from Loggregator agents
+			* Traffic Controller - poll Doppler servers for logs and metrics
+			* Reverse Log Proxy - collect logs and metrics from Dopplers and forward them to Log Cache and Traffic Controllers
+			* Syslog Agents
+			* Syslog Binding Cache - 
+			* Firehose - websocket endpoint located in traffic controller that streams all event data from a CF deployment
+			* Log Cache - allows to view logs and metrics from the Firehose over a specified period of time
+			* Nozzle - are programs that consume data from Firehose and can be configure to select, buffer, and transform data, and forward it to other apps and services.
+		------------------------------------------
+
 		* every log line contains 4 fields 
 			---> Timestamp
 			---> Log type(Origin Code) -> API, STG, RTR, LGR, APP, SSH, CELL
@@ -112,7 +127,16 @@ Pivotal Web Service (PWS) ---> provides "Cloud Foundry as a web serivice", deplo
 
 
 
+==========================================
 
+* How does Pivotal Cloud Foundry address some of the challenges with Microservices?
+
+	---> DYNAMIC ROUTING when you bring an application up
+	---> Scale out application
+	---> Monitoring the services through LOGS and cf EVENTS
+	---> Service MARKETPLACE where you can provision services for polyglot persistence
+	---> The platform is designed to keep your appications up with the four levels of HIGH AVAILABILITY
+	---> BUILDPACKS offer consistent way to recreate application droplets and know that what you're running is being built out the proper way
 
 
 
